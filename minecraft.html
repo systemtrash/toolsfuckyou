@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hospedagem Minecraft — Froggy</title>
+<style>
+:root{--bg:#000;--brand:#3bd27a;--muted:#9aa0a6}
+body{background:linear-gradient(180deg,#000,#041018);color:#eafaf0;font-family:Inter,Segoe UI,Arial;margin:0;padding:40px}
+.container{max-width:1000px;margin:0 auto}
+.header{display:flex;align-items:center;gap:16px}
+.logo-badge{width:52px;height:52px;border-radius:12px;background:linear-gradient(45deg,var(--brand),#2fc55f);display:flex;align-items:center;justify-content:center;font-weight:800}
+h1{color:var(--brand);margin-top:18px}
+.card{background:rgba(255,255,255,0.03);padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);margin-top:24px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+.feature{padding:14px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.01)}
+.btn{display:inline-block;padding:12px 20px;background:linear-gradient(90deg,var(--brand),#2fc55f);color:#02110a;border-radius:12px;text-decoration:none;font-weight:800}
+.note{color:var(--muted);margin-top:12px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo-badge">🐸</div>
+    <div>
+      <div style="font-size:13px;color:var(--muted)">Froggy — Serviços</div>
+      <h1>Hospedagem de Mundos Minecraft</h1>
+    </div>
+  </div>
+
+  <div class="card">
+    <p style="font-size:16px;color:var(--muted)">Hospede seu mundo Minecraft com servidores otimizados para baixa latência, backups automáticos e proteção DDoS. Suporte para plugins, mods e configurações de porta para acesso público.</p>
+
+
+    <div id="mcConfigSummary" class="card" style="margin-top:14px;padding:12px;display:none">
+      <strong>Configuração atual</strong>
+      <div id="mcSummaryContent" style="margin-top:8px;color:var(--muted)"></div>
+      <div style="margin-top:10px"><a class="btn" id="editConfig" href="configurar-mundo.html">Editar Configuração</a></div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature">
+        <strong>Segurança</strong>
+        <div class="note">Proteção DDoS, snapshots de backup e permissões configuráveis.</div>
+      </div>
+      <div class="feature">
+        <strong>Velocidade</strong>
+        <div class="note">Instâncias com rede prioritária e alta I/O para mundos responsivos.</div>
+      </div>
+      <div class="feature">
+        <strong>Backups</strong>
+        <div class="note">Snapshots diários e restauração com um clique.</div>
+      </div>
+      <div class="feature">
+        <strong>Mods & Plugins</strong>
+        <div class="note">Instalação simples de Bukkit/Spigot/Paper e suporte a mods via Forge/ Fabric.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <a class="btn" href="assinaturas.html" target="_blank">Começar a hospedar</a>
+      <div class="note">Precisa de ajuda? Entre em contato com o suporte.</div>
+    </div>
+      </div>
+    </div>
+
+    <script>
+      try{
+        const raw = localStorage.getItem('mcConfig');
+        if(raw){
+          const cfg = JSON.parse(raw);
+          const el = document.getElementById('mcConfigSummary');
+          const content = document.getElementById('mcSummaryContent');
+          el.style.display = 'block';
+          content.innerHTML = `Nome: <strong>${cfg.worldName || ''}</strong><br>Versão: ${cfg.version || ''} • RAM: ${cfg.ram || ''} • Jogadores: ${cfg.maxPlayers || ''} • Porta: ${cfg.port || ''}` + (cfg.enableMods? ('<br>Mods/Plugins: '+(cfg.mods && cfg.mods.length? cfg.mods.join(', '): '—')) : '');
+        }
+      }catch(e){console.warn(e)}
+    </script>
+
+    </body>
+    </html>

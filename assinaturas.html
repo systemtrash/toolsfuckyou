@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Assinaturas — Froggy VPN</title>
+  <style>
+    :root{ --brand:#3bd27a; --brand-strong:#2fc55f; --bg:#000; --muted:#9aa0a6 }
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#000 0%,#0a0a0a 100%);color:#fff;min-height:100vh;margin:0}
+    .container{max-width:1100px;margin:0 auto;padding:28px}
+    header{padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .logo-inline{display:flex;gap:12px;align-items:center}
+    .logo-badge{width:40px;height:40px;border-radius:50%;background:linear-gradient(45deg,var(--brand),var(--brand-strong));box-shadow:0 6px 18px rgba(47,197,95,0.12)}
+    h1{font-size:28px;margin:18px 0;color:var(--brand)}
+    .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:20px}
+    .plan{background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+    .plan.pro{background:linear-gradient(45deg,var(--brand),var(--brand-strong));color:#061606;border:1px solid rgba(47,197,95,0.12)}
+    .plan h3{margin:6px 0 10px}
+    .plan .price{font-weight:800;font-size:20px;margin-bottom:12px}
+    .btn{display:inline-block;padding:10px 18px;border-radius:10px;background:var(--brand);color:#041404;text-decoration:none;font-weight:700}
+    .muted{color:var(--muted)}
+    .note{margin-top:12px;color:var(--muted);font-size:13px}
+    footer{margin-top:40px;padding:20px 0;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header class="container">
+    <div class="logo-inline"><div class="logo-badge" aria-hidden></div><div style="font-weight:800;color:var(--brand)">Froggy</div></div>
+  </header>
+
+  <main class="container">
+    <h1>Assinaturas Froggy</h1>
+    <p class="muted">Escolha o plano que melhor combina com você. Não há cobrança aqui — esta é uma página de demonstração.</p>
+
+    <div class="pricing-grid">
+      <div class="plan">
+        <h3>Grátis</h3>
+        <div class="price">R$0 / mês</div>
+        <p class="muted">Acesso limitado, ideal para testar.</p>
+        <p><a class="btn" href="#" onclick="subscribe('Grátis')">Selecionar</a></p>
+      </div>
+
+      <div class="plan pro">
+        <h3>Pro</h3>
+        <div class="price">R$12 / mês</div>
+        <p>Velocidade completa e servidores prioritários.</p>
+        <p><a class="btn" href="#" onclick="subscribe('Pro')">Assinar</a></p>
+      </div>
+
+      <div class="plan">
+        <h3>Empresa</h3>
+        <div class="price">Contato</div>
+        <p class="muted">Suporte e contas para times.</p>
+        <p><a class="btn" href="#" onclick="subscribe('Empresa')">Contato</a></p>
+      </div>
+    </div>
+
+    <p class="note">Ao clicar em um plano você será levado ao fluxo de pagamento (simulado).</p>
+
+    <footer>
+      <div class="container">
+        <a href="index.html" style="color:var(--muted);text-decoration:none">&larr; Voltar para Froggy</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Modal helper (copied from index.html) so messages use the same UI
+    function showModal(title, message) {
+      const existing = document.querySelector('.app-modal-overlay');
+      if (existing) existing.remove();
+      const overlay = document.createElement('div');
+      overlay.className = 'app-modal-overlay';
+      const modal = document.createElement('div');
+      modal.className = 'app-modal';
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'close-x';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.addEventListener('click', () => overlay.remove());
+      const h = document.createElement('h3'); h.textContent = title;
+      const p = document.createElement('p'); p.innerHTML = message;
+      modal.appendChild(closeBtn);
+      modal.appendChild(h);
+      modal.appendChild(p);
+      overlay.appendChild(modal);
+      overlay.addEventListener('click', (ev) => { if (ev.target === overlay) overlay.remove(); });
+      document.body.appendChild(overlay);
+    }
+
+    function subscribe(plan){
+      showModal('Assinatura', 'Fluxo de assinatura simulado para o plano: ' + plan);
+      setTimeout(() => { window.open('index.html','_self'); }, 1100);
+    }
+  </script>
+</body>
+</html>

@@ -1,1 +1,1367 @@
-TESTEEEEEEEEEEEEEEEEEE
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>bytebox VPN</title>
+	<style>
+		:root{
+			--bg-1: #000000;
+			--bg-2: #000000;
+			--brand: #3bd27a; /* Froggy green */
+			--brand-strong: #2fc55f;
+			--muted: #9aa0a6;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		@keyframes snowfall {
+			0% {
+				transform: translateY(-100px) translateX(0);
+				opacity: 0.8;
+			}
+			10% {
+				opacity: 0.9;
+			}
+			90% {
+				opacity: 0.6;
+			}
+			100% {
+				transform: translateY(calc(100vh + 100px)) translateX(150px);
+				opacity: 0;
+			}
+		}
+
+		@keyframes sway {
+			0%, 100% {
+				transform: translateX(0px);
+			}
+			25% {
+				transform: translateX(30px);
+			}
+			50% {
+				transform: translateX(0px);
+			}
+			75% {
+				transform: translateX(-30px);
+			}
+		}
+
+		.snowflake {
+				position: fixed;
+				top: 0;
+				z-index: 15;
+				pointer-events: none;
+				user-select: none;
+				animation: snowfall linear infinite, sway 3s ease-in-out infinite;
+				opacity: 0.95;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+		}
+
+		/* frogflake uses same positioning as snowflake; ensure visible across the page */
+		.frogflake {
+			position: fixed;
+			top: 0;
+			z-index: 30;
+			pointer-events: none;
+			user-select: none;
+			display: block;
+		}
+
+			.snowflake img{
+				display:block;
+				width:28px;
+				height:auto;
+				filter: drop-shadow(0 6px 12px rgba(47,197,95,0.08));
+			}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+			background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-1) 100%);
+			background-attachment: fixed;
+			color: #fff;
+			line-height: 1.6;
+			min-height: 100vh;
+			overflow-x: hidden;
+		}
+
+		header {
+			background: rgba(4, 20, 16, 0.9);
+			backdrop-filter: blur(10px);
+			padding: 16px 0;
+			border-bottom: 1px solid rgba(59,210,122,0.08);
+			position: fixed;
+			width: 100%;
+			top: 0;
+			z-index: 100;
+		}
+
+		.sidebar-header {
+			padding: 15px 20px;
+			border-bottom: 1px solid rgba(59,210,122,0.06);
+			margin-bottom: 20px;
+		}
+
+		.user-profile {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.user-avatar {
+			width: 40px;
+			height: 40px;
+			background: transparent;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 20px;
+			border: 1px solid rgba(255,255,255,0.06);
+		}
+
+		.user-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+
+		.username {
+			color: var(--brand);
+			font-weight: 700;
+		}
+
+		.profile-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.status {
+			font-size: 12px;
+			color: #6b8fb0;
+		}
+
+		/* LOGIN MODAL */
+		.login-modal {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.85);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 200;
+		}
+
+		.login-modal.active {
+			display: flex;
+		}
+
+		.login-container {
+			background: linear-gradient(180deg, #000000 0%, #041018 60%);
+			border: 1px solid rgba(47,197,95,0.08);
+			border-radius: 16px;
+			padding: 28px;
+			width: 92%;
+			max-width: 520px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 18px;
+			align-items: start;
+			box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+		}
+
+		.login-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+			border-bottom: 1px solid rgba(255,255,255,0.03);
+			padding-bottom: 10px;
+			grid-column: 1 / -1;
+		}
+
+		.login-header h2 {
+			color: var(--brand);
+			font-size: 22px;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		/* frog badge inside header */
+		.login-header .frog-badge{
+			width:36px;height:36px;border-radius:50%;background:linear-gradient(45deg,var(--brand),var(--brand-strong));display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 20px rgba(47,197,95,0.12);
+		}
+		.login-header .frog-badge img{width:22px;height:22px;display:block}
+
+		.close-login {
+			background: transparent;
+			border: none;
+			color: var(--muted);
+			font-size: 28px;
+			cursor: pointer;
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius:8px;
+		}
+		.close-login:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+		.close-login:hover {
+			color: #ff6b6b;
+		}
+
+		.login-tabs {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 25px;
+		}
+
+		.tab-btn {
+			flex: 1;
+			padding: 10px 12px;
+			background: rgba(255,255,255,0.02);
+			border: 1px solid rgba(255,255,255,0.03);
+			color: var(--muted);
+			border-radius: 10px;
+			cursor: pointer;
+			transition: all 0.25s ease;
+			font-weight:700;
+		}
+
+		.tab-btn.active {
+			background: linear-gradient(90deg, var(--brand), var(--brand-strong));
+			border-color: rgba(47,197,95,0.16);
+			color: #02110a;
+		}
+
+		.tab-content {
+			display: none;
+		}
+
+		.tab-content.active {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.input-field {
+			padding: 14px 12px;
+			background: rgba(255,255,255,0.02);
+			border: 1px solid rgba(255,255,255,0.04);
+			border-radius: 12px;
+			color: #eafaf0;
+			font-size: 15px;
+			box-shadow: inset 0 -2px 8px rgba(0,0,0,0.35);
+		}
+
+		.input-field:focus {
+			outline: none;
+			border-color: var(--brand);
+			box-shadow: 0 6px 30px rgba(47,197,95,0.12);
+			background: rgba(0,0,0,0.08);
+		}
+
+		.input-field:focus {
+			outline: none;
+			border-color: rgba(0, 0, 0, 0.6);
+			background: rgba(0, 0, 0, 0.1);
+		}
+
+		.input-field::placeholder {
+			color: rgba(234,250,240,0.35);
+		}
+
+		/* Buttons inside modal */
+		.login-container .btn { 
+			padding: 12px 20px;
+			border-radius: 12px;
+			font-weight: 800;
+			background: linear-gradient(90deg, var(--brand), var(--brand-strong));
+			color: #02110a;
+			border: none;
+			box-shadow: 0 10px 30px rgba(47,197,95,0.14);
+		}
+
+		.login-container .btn.btn-secondary{
+			background: transparent;
+			border: 1px solid rgba(255,255,255,0.04);
+			color: var(--muted);
+		}
+
+		.login-note{font-size:13px;color:var(--muted);margin-top:8px}
+
+		/* Left visual column - decorative */
+		.login-decor{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:8px}
+		.login-decor .big-frog{width:120px;height:120px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#07120a,#021008);box-shadow:inset 0 -10px 30px rgba(0,0,0,0.6),0 20px 60px rgba(0,0,0,0.6)}
+		.login-decor .big-frog img{width:84px;height:84px}
+
+		.section-title {
+			font-size: 11px;
+			color: var(--muted);
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			margin-bottom: 12px;
+			font-weight: bold;
+		}
+
+		.menu-list {
+			list-style: none;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.menu-list a {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 10px 12px;
+			color: var(--muted);
+			text-decoration: none;
+			border-radius: 8px;
+			transition: all 0.3s;
+			font-size: 14px;
+		}
+
+		.menu-list a:hover {
+			background: rgba(47,197,95,0.04);
+			color: var(--brand);
+		}
+
+		.menu-list .icon {
+			font-size: 16px;
+			min-width: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.menu-list .icon img {
+			display: block;
+			width: 20px;
+			height: 20px;
+			object-fit: contain;
+			vertical-align: middle;
+		}
+
+		/* Modal message */
+		.app-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000}
+		.app-modal{background:#08100a;color:#eafaf0;max-width:520px;width:90%;border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative}
+		.app-modal h3{margin:0 0 8px;font-size:18px}
+		.app-modal p{margin:0;font-size:15px;color:var(--muted)}
+		.app-modal .close-x{position:absolute;right:12px;top:8px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+
+		/* Fullscreen blur overlay (blurs everything behind it) */
+		.page-blur-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.03);backdrop-filter:blur(0.6px);-webkit-backdrop-filter:blur(0.6px);pointer-events:none;z-index:10}
+
+		/* Owners list / card styles */
+		.owners-list{list-style:none;padding:0;margin:8px 0 0 0}
+		.owners-list li{margin:6px 0}
+		.owners-list a{color:var(--muted);text-decoration:none;font-size:13px}
+		.owners-list a:hover{color:var(--brand)}
+
+		.owner-card{display:flex;align-items:center;gap:10px;padding:8px 0}
+		.owner-card img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid rgba(47,197,95,0.08)}
+		.owner-card .owner-name{color:var(--muted);font-weight:700}
+
+		.menu-list .logout {
+			color: #ff6b6b;
+		}
+
+		.menu-list .logout:hover {
+			background: rgba(255, 107, 107, 0.1);
+			color: #ff8787;
+		}
+
+		/* Scrollbar do sidebar */
+		.sidebar::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.sidebar::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		.sidebar::-webkit-scrollbar-thumb {
+			background: rgba(0, 0, 0, 0.2);
+			border-radius: 3px;
+		}
+
+		.sidebar::-webkit-scrollbar-thumb:hover {
+			background: rgba(0, 0, 0, 0.4);
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+			position: relative;
+			z-index: 20; /* place content above the blur overlay */
+		}
+
+		header .container {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.header-right {
+			display: flex;
+			align-items: center;
+		}
+
+		.menu-toggle {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			background: linear-gradient(180deg, #000000, #050505);
+			border: 1px solid rgba(47,197,95,0.18);
+			padding: 8px 16px;
+			border-radius: 20px;
+			cursor: pointer;
+			transition: all 0.2s;
+			color: #ffffff;
+			font-weight: 700;
+		}
+
+		.menu-toggle:hover {
+			background: linear-gradient(180deg, #070707, #000000);
+			border-color: rgba(47,197,95,0.26);
+		}
+
+		.user-avatar-small {
+			width: 32px;
+			height: 32px;
+			background: transparent;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 16px;
+		}
+
+		.user-avatar-small img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+
+		/* Sidebar header / profile (Froggy style) */
+		.sidebar-header{padding:12px 0 18px 0;border-bottom:1px solid rgba(47,197,95,0.04);margin-bottom:8px}
+		.user-profile{display:flex;align-items:center;gap:12px}
+		.user-avatar{width:64px;height:64px;border-radius:12px;overflow:hidden;background:transparent;border:2px solid rgba(59,210,122,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.45);flex-shrink:0}
+		.user-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+		.profile-info{display:flex;flex-direction:column}
+		.username{font-weight:800;color:var(--brand);font-size:16px}
+		.status{font-size:13px;color:var(--muted);margin-left:4px;font-weight:600}
+		.login-actions{margin-top:8px;display:flex;gap:8px}
+		.login-actions .btn{padding:8px 12px;font-size:13px;border-radius:10px}
+		.login-actions .btn.btn-secondary{background:transparent;border:1px solid rgba(59,210,122,0.08);color:var(--brand)}
+
+		.menu-label {
+			font-size: 14px;
+		}
+
+		.sidebar {
+			position: fixed;
+			top: -400px !important;
+			left: 0;
+			width: 100%;
+			height: auto;
+			background: linear-gradient(180deg,#000000,#041018);
+			backdrop-filter: blur(10px);
+			border-bottom: 1px solid rgba(47,197,95,0.06);
+			overflow-y: auto;
+			z-index: 99;
+			padding: 20px;
+			transition: top 0.3s ease;
+		}
+
+		.sidebar.active {
+			top: 70px !important;
+		}
+
+		.sidebar-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0);
+			z-index: 98;
+			opacity: 0;
+			pointer-events: none;
+			transition: all 0.3s;
+		}
+
+		.sidebar-overlay.active {
+			background: rgba(0, 0, 0, 0.5);
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.logo {
+			font-size: 28px;
+			font-weight: 800;
+			color: var(--brand);
+			text-shadow: 0 0 18px rgba(59,210,122,0.25);
+			letter-spacing: 0.4px;
+		}
+
+		/* Frog logo icon */
+		.logo-inline {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.logo-badge {
+			width: 42px;
+			height: 42px;
+			border-radius: 50%;
+			background: linear-gradient(45deg, var(--brand), var(--brand-strong));
+			position: relative;
+			box-shadow: 0 6px 18px rgba(47,197,95,0.12);
+			flex-shrink: 0;
+			transform: translateY(0);
+			transition: transform 0.28s ease;
+		}
+
+		.logo-badge::before,
+		.logo-badge::after {
+			content: '';
+			position: absolute;
+			background: #083012;
+			border-radius: 50%;
+		}
+
+		.logo-badge::before { /* left eye */
+			width: 8px;
+			height: 8px;
+			top: 12px;
+			left: 12px;
+		}
+
+		.logo-badge::after { /* right eye */
+			width: 8px;
+			height: 8px;
+			top: 12px;
+			right: 12px;
+		}
+
+		.logo:hover .logo-badge { transform: translateY(-4px); }
+
+		nav a {
+			color: var(--muted);
+			text-decoration: none;
+			margin-left: 30px;
+			transition: color 0.3s;
+		}
+
+		nav a:hover {
+			color: var(--brand);
+		}
+
+		.hero {
+			margin-top: 80px;
+			padding: 100px 0;
+			text-align: center;
+		}
+
+		.hero h1 {
+			font-size: 48px;
+			margin-bottom: 20px;
+			background: linear-gradient(45deg, var(--brand), var(--brand-strong));
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+			text-shadow: 0 0 30px rgba(59,210,122,0.18);
+		}
+
+		.hero p {
+			font-size: 20px;
+			color: var(--muted);
+			margin-bottom: 40px;
+		}
+
+		.btn {
+			display: inline-block;
+			padding: 12px 34px;
+			background: linear-gradient(45deg, var(--brand), var(--brand-strong));
+			color: white;
+			text-decoration: none;
+			border-radius: 12px;
+			transition: all 0.22s ease;
+			border: 2px solid rgba(47,197,95,0.12);
+			cursor: pointer;
+			font-size: 15px;
+			font-weight: 700;
+		}
+
+		.btn:hover {
+			background: linear-gradient(45deg, var(--brand-strong), var(--brand));
+			box-shadow: 0 8px 30px rgba(47,197,95,0.18);
+			transform: translateY(-2px);
+		}
+
+		.btn-secondary {
+			background: transparent;
+			border-color: rgba(59,210,122,0.18);
+			color: var(--brand);
+			margin-left: 20px;
+		}
+
+		.btn-secondary:hover {
+			background: rgba(59,210,122,0.06);
+			box-shadow: 0 6px 24px rgba(59,210,122,0.08);
+		}
+
+		.features {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 30px;
+			margin: 80px 0;
+		}
+
+		.feature-card {
+			background: rgba(0, 0, 0, 0.55);
+			backdrop-filter: blur(6px);
+			padding: 40px;
+			border-radius: 15px;
+			border: 1px solid rgba(0, 0, 0, 0.3);
+			transition: all 0.3s;
+		}
+
+		.feature-card:hover {
+			border-color: rgba(47,197,95,0.06);
+			background: rgba(0, 0, 0, 0.78);
+			transform: translateY(-5px);
+			box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+		}
+
+		.feature-card h3 {
+			color: var(--brand);
+			margin-bottom: 15px;
+			font-size: 22px;
+		}
+
+		.feature-card p {
+			color: var(--muted);
+			font-size: 14px;
+		}
+
+		.icon {
+			font-size: 40px;
+			margin-bottom: 15px;
+		}
+
+		/* Ajustar conteúdo para sidebar */
+		#features {
+			margin-left: 0;
+		}
+
+		footer {
+			text-align: center;
+			padding: 40px 0;
+			border-top: 1px solid rgba(0,0,0,0.08);
+			color: var(--muted);
+			margin-top: 100px;
+			position: relative;
+			z-index: 20;
+		}
+
+		@media (max-width: 768px) {
+			.hero h1 {
+				font-size: 32px;
+			}
+
+			nav a {
+				margin-left: 15px;
+				font-size: 14px;
+			}
+
+			.btn-secondary {
+				display: block;
+				margin: 20px 0 0 0;
+			}
+
+			.sidebar {
+				width: 250px;
+			}
+
+			.hero {
+				margin-left: 0;
+			}
+
+			#features {
+				margin-left: 0;
+			}
+		}
+	</style>
+
+	<style>
+		:root{--bg:#000;--brand:#00cc44;--brand-strong:#00b33a;--muted:#9aa0a6}
+		body{background:linear-gradient(180deg,#000,#041018)}
+		/* Ensure frog layer covers full viewport and frogs are visible */
+		#frogLayer{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:visible}
+		.frogflake{position:absolute;will-change:transform;pointer-events:none;user-select:none;z-index:10000}
+		/* Modal overlay should appear above frogs */
+		.app-modal-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:20000}
+	</style>
+</head>
+<body>
+	<div class="page-blur-overlay" aria-hidden="true"></div>
+	<!-- TOP BAR -->
+	<div class="topbar">
+		<div class="container topbar-inner">
+			<div class="top-left">Not using bytebox VPN</div>
+			<div class="top-right">Rio de Janeiro, Brazil &nbsp; • &nbsp; <a href="recursos.html">Check features</a></div>
+		</div>
+	</div>
+
+
+
+
+
+	<header>
+		<div class="container">
+			<div class="logo">bytebox</div>
+			<div class="header-right">
+				<button class="menu-toggle" id="menuToggle">
+					<div class="user-avatar-small"><img src="https://cdn.discordapp.com/emojis/1474950900702515372.webp?size=128&animated=true" alt="avatar"></div>
+					<span class="menu-label">Menu</span>
+				</button>
+			</div>
+		</div>
+	</header>
+
+	<!-- SIDEBAR MENU (LADO DIREITO) - SIMPLES -->
+	<div class="sidebar" id="sidebar">
+		<div class="sidebar-header">
+			<div class="user-profile">
+				<div class="user-avatar"><img src="https://cdn.discordapp.com/emojis/1474950900702515372.webp?size=128&animated=true" alt="avatar"></div>
+				<div class="profile-info">
+					<div style="display:flex;align-items:center;gap:8px;">
+						<span class="username" id="username">Não Logado</span>
+						<span class="status" id="loginStatus">Clique para fazer login</span>
+					</div>
+					<div class="login-actions">
+						<button class="btn" id="headerLoginBtn">Entrar</button>
+						<button class="btn btn-secondary" id="headerSignupBtn">Cadastrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="sidebar-section">
+			<ul class="menu-list">
+				<li><a href="#" id="downloadVPN" onclick="downloadVPN(event)" style="display:none;"><span class="icon">[D]</span> Baixar VPN</a></li>
+			</ul>
+		</div>
+
+		<!-- owners removed from sidebar (showcase remains on page) -->
+	</div>
+
+	<!-- OVERLAY para fechar menu -->
+	<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+	<!-- MODAL LOGIN -->
+	<div class="login-modal" id="loginModal">
+		<div class="login-container">
+			<div class="login-header">
+				<h2>Bem-vindo ao bytebox</h2>
+				<button class="close-login" onclick="closeLogin()">&times;</button>
+			</div>
+
+			<div class="login-tabs">
+				<button class="tab-btn active" onclick="switchTab('login')">Login</button>
+				<button class="tab-btn" onclick="switchTab('signup')">Cadastro</button>
+			</div>
+
+			<!-- LOGIN FORM -->
+			<div id="loginTab" class="tab-content active">
+				<input type="email" id="loginEmail" placeholder="Email" class="input-field">
+				<input type="password" id="loginPassword" placeholder="Senha" class="input-field">
+				<button class="btn" onclick="login()">Entrar</button>
+			</div>
+
+			<!-- SIGNUP FORM -->
+			<div id="signupTab" class="tab-content">
+				<input type="text" id="signupName" placeholder="Nome de Usuário" class="input-field">
+				<input type="email" id="signupEmail" placeholder="Email" class="input-field">
+				<input type="password" id="signupPassword" placeholder="Senha" class="input-field">
+				<input type="password" id="signupPasswordConfirm" placeholder="Confirmar Senha" class="input-field">
+				<button class="btn" onclick="signup()">Cadastrar</button>
+			</div>
+		</div>
+	</div>
+
+	<section class="hero">
+		<div class="container">
+			<div class="hero-top">
+				<div class="logo logo-inline"><div class="logo-badge" aria-hidden="true"></div><div>bytebox</div></div>
+			</div>
+			<h1>Conexão Rápida e Segura</h1>
+			<p>Proteção de privacidade com a melhor velocidade de internet</p>
+				<div>
+					<a class="btn btn-secondary" href="configurar-mundo.html" style="margin-right:12px;">Configurar Mundo</a>
+					<a class="btn" href="assinaturas.html">Começar Agora</a>
+					<a class="btn btn-secondary" href="saiba-mais.html">Saiba Mais</a>
+				</div>
+		</div>
+	</section>
+
+	<section id="features">
+		<div class="container">
+			<h2 style="text-align: center; font-size: 36px; margin-bottom: 60px; color: var(--brand);">Nossos Recursos</h2>
+			<div class="features">
+				<div class="feature-card">
+				<div class="icon"><img src="https://cdn.discordapp.com/emojis/1418297962739662918.webp?size=128" alt="Segurança" style="width: 40px; height: 40px;"></div>
+					<h3>Segurança Total</h3>
+					<p>Criptografia de ponta a ponta para proteger sua conexão em redes públicas.</p>
+				</div>
+				<div class="feature-card">
+					<div class="icon"><img src="https://cdn.discordapp.com/emojis/1153016229016121354.webp?size=128" alt="Velocidade" style="width: 40px; height: 40px;"></div>
+					<h3>Velocidade Ultra</h3>
+					<p>Infraestrutura otimizada para máxima performance em todas as regiões.</p>
+				</div>
+				<div class="feature-card">
+				<div class="icon"><img src="https://cdn.discordapp.com/emojis/1206704030970159134.webp?size=128" alt="Global" style="width: 40px; height: 40px;"></div>
+					<h3>Global</h3>
+					<p>Conecte-se em mais de 200 locais no mundo com um único clique.</p>
+				</div>
+				<div class="feature-card">
+					<div class="icon"><img src="https://cdn.discordapp.com/emojis/1206704452023619605.webp?size=128" alt="Privacidade" style="width: 40px; height: 40px;"></div>
+					<h3>Privacidade</h3>
+					<p>Seu IP será oculto. Nós não registramos sua atividade.</p>
+				</div>
+				<div class="feature-card">
+				<div class="icon"><img src="https://cdn.discordapp.com/emojis/1252076189774774354.webp?size=128" style="width: 40px; height: 40px;"></div>
+					<h3>Multi-Plataforma</h3>
+					<p>Disponível em Windows, Mac, iOS, Android e Linux.</p>
+				</div>
+				<div class="feature-card">
+				<div class="icon"><img src="https://cdn.discordapp.com/emojis/1433805546498293930.webp?size=128" alt="Fácil" style="width: 40px; height: 40px;"></div>
+					<h3>Fácil de Usar</h3>
+					<p>Interface intuitiva com um clique para ativar a proteção.</p>
+				</div>
+				<div class="feature-card">
+					<div class="icon"><img src="https://cdn.discordapp.com/emojis/1433805324955156480.webp?size=128" alt="Minecraft" style="width:40px;height:40px"></div>
+					<h3>Hospedagem de Mundos (Minecraft)</h3>
+					<p>Hospede seu mundo com performance dedicada, backups automáticos, suporte a plugins e mods, portas configuráveis e proteção contra DDoS.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- PRICING / CTA -->
+	<section id="pricing" style="padding:60px 0;background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent);">
+		<div class="container">
+			<h2 style="text-align:center;color:var(--brand);margin-bottom:30px;">Escolha seu plano bytebox</h2>
+			<div class="pricing-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
+				<div class="plan" style="background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);">
+					<h3>Grátis</h3>
+					<p style="margin:6px 0 12px;color:var(--muted);">Teste básico</p>
+					<div style="font-size:20px;font-weight:700;margin-bottom:12px;">R$0/mês</div>
+					<a class="btn" href="assinaturas.html">Começar</a>
+				</div>
+				<div class="plan" style="background:linear-gradient(45deg,var(--brand),var(--brand-strong));padding:20px;border-radius:12px;color:#fff;">
+					<h3>Pro</h3>
+					<p style="margin:6px 0 12px;">Mais rápido e seguro</p>
+					<div style="font-size:20px;font-weight:700;margin-bottom:12px;">R$12/mês</div>
+					<a class="btn" href="assinaturas.html">Assinar</a>
+				</div>
+				<div class="plan" style="background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);">
+					<h3>Empresa</h3>
+					<p style="margin:6px 0 12px;color:var(--muted);">Conexões ilimitadas</p>
+					<div style="font-size:20px;font-weight:700;margin-bottom:12px;">Contato</div>
+					<a class="btn" href="assinaturas.html">Contato</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- TESTIMONIALS -->
+	<section id="testimonials" style="padding:60px 0;">
+		<div class="container">
+			<h2 style="text-align:center;color:var(--brand);margin-bottom:30px;">O que usuários dizem</h2>
+			<div id="testimonial-box" style="max-width:900px;margin:0 auto;padding:30px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(0,0,0,0.06);text-align:center;">
+				<p id="testimonial-text" style="font-size:18px;color:var(--muted);">“Excelente serviço, rápido e confiável.”</p>
+				<div style="margin-top:12px;color:var(--muted);font-weight:600;" id="testimonial-author">— Ana, Brasil</div>
+			</div>
+		</div>
+	</section>
+
+
+	<!-- Owners showcase (main page) -->
+	<section id="owners-showcase" style="padding:40px 0 20px;">
+		<div class="container" style="text-align:center;">
+			<h2 style="color:var(--brand);margin-bottom:16px;">Donos</h2>
+			<div id="ownersShowcase" style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;"></div>
+		</div>
+	</section>
+
+	<footer>
+		<div class="container">
+			<p>&copy; 2026 bytebox VPN. Todos os direitos reservados.</p>
+		</div>
+	</footer>
+
+	<script>
+		// Sistema de Login e Menu
+		const menuToggle = document.getElementById('menuToggle');
+		const sidebar = document.getElementById('sidebar');
+		const overlay = document.getElementById('sidebarOverlay');
+		const loginModal = document.getElementById('loginModal');
+		let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+		// Toggle Menu
+		menuToggle.addEventListener('click', () => {
+			sidebar.classList.toggle('active');
+			overlay.classList.toggle('active');
+		});
+
+		overlay.addEventListener('click', () => {
+			sidebar.classList.remove('active');
+			overlay.classList.remove('active');
+		});
+
+		// Funções de Login
+		function toggleLogin(e) {
+			e.preventDefault();
+			if (currentUser) {
+				logout();
+			} else {
+				loginModal.classList.add('active');
+			}
+		}
+
+		function closeLogin() {
+			loginModal.classList.remove('active');
+		}
+
+		function switchTab(tab) {
+			// Switch visible tab content and mark the corresponding tab button active.
+			document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+			document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+			const targetTab = document.getElementById(tab + 'Tab');
+			if (targetTab) targetTab.classList.add('active');
+			// Try to find the tab button that invoked the switch (inline onclick contains the tab name)
+			const btn = document.querySelector(`.tab-btn[onclick*="${tab}"]`);
+			if (btn) btn.classList.add('active');
+		}
+
+		function login() {
+			const email = document.getElementById('loginEmail').value;
+			const password = document.getElementById('loginPassword').value;
+
+			if (!email || !password) {
+				showModal('Erro', 'Preencha todos os campos!');
+				return;
+			}
+
+			// Simular login (verificar se usuário existe no localStorage)
+			const allUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
+			const user = allUsers.find(u => u.email === email && u.password === password);
+
+			if (user) {
+				localStorage.setItem('currentUser', JSON.stringify(user));
+				currentUser = user;
+				updateUserProfile();
+				loginModal.classList.remove('active');
+				showModal('Sucesso', 'Login realizado com sucesso!');
+			} else {
+				showModal('Erro', 'Email ou senha incorretos!');
+			}
+		}
+
+		function signup() {
+			const name = document.getElementById('signupName').value;
+			const email = document.getElementById('signupEmail').value;
+			const password = document.getElementById('signupPassword').value;
+			const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+
+			if (!name || !email || !password || !passwordConfirm) {
+				showModal('Erro', 'Preencha todos os campos!');
+				return;
+			}
+
+			if (password !== passwordConfirm) {
+				showModal('Erro', 'As senhas não correspondem!');
+				return;
+			}
+
+			const allUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
+			if (allUsers.find(u => u.email === email)) {
+				showModal('Erro', 'Este email já está cadastrado!');
+				return;
+			}
+
+			const newUser = { name, email, password };
+			allUsers.push(newUser);
+			localStorage.setItem('allUsers', JSON.stringify(allUsers));
+			localStorage.setItem('currentUser', JSON.stringify(newUser));
+			currentUser = newUser;
+			updateUserProfile();
+			loginModal.classList.remove('active');
+			showModal('Sucesso', 'Cadastro realizado com sucesso!');
+		}
+
+		function logout() {
+			localStorage.removeItem('currentUser');
+			currentUser = null;
+			updateUserProfile();
+		}
+
+		function updateUserProfile() {
+			const usernameEl = document.getElementById('username');
+			const loginStatusEl = document.getElementById('loginStatus');
+			const loginLogoutBtn = document.getElementById('loginLogoutText');
+			const downloadBtn = document.getElementById('downloadVPN');
+
+			if (currentUser) {
+				usernameEl.textContent = currentUser.name;
+				loginStatusEl.textContent = '✓ Logado';
+				loginStatusEl.style.color = '#3bd27a';
+				if (loginLogoutBtn) loginLogoutBtn.textContent = 'Logout';
+				if (downloadBtn) downloadBtn.style.display = 'flex';
+			} else {
+				usernameEl.textContent = 'Não Logado';
+				loginStatusEl.textContent = 'Clique para fazer login';
+				loginStatusEl.style.color = '#6b8fb0';
+				if (loginLogoutBtn) loginLogoutBtn.textContent = 'Login/Cadastro';
+				if (downloadBtn) downloadBtn.style.display = 'none';
+			}
+		}
+
+		// Small modal helper (replaces alert)
+		function showModal(title, message){
+			let overlay = document.querySelector('.app-modal-overlay');
+			if (!overlay) {
+				overlay = document.createElement('div');
+				overlay.className = 'app-modal-overlay';
+				overlay.innerHTML = `<div class="app-modal"><button class="close-x" aria-label="close">&times;</button><h3></h3><p></p></div>`;
+				document.body.appendChild(overlay);
+				overlay.addEventListener('click', (e) => {
+					if (e.target === overlay || e.target.classList.contains('close-x')) overlay.style.display = 'none';
+				});
+			}
+			const modal = overlay.querySelector('.app-modal');
+			modal.querySelector('h3').textContent = title || '';
+			modal.querySelector('p').textContent = message || '';
+			overlay.style.display = 'flex';
+		}
+
+		function downloadVPN(e) {
+			e.preventDefault();
+			// Mostrar a página de assinaturas apenas uma vez por usuário
+			const key = 'seenAssinaturasNotice';
+			if (!localStorage.getItem(key)) {
+				localStorage.setItem(key, '1');
+				window.open('assinaturas.html','_blank');
+			} else {
+				showModal('Aviso', 'Você já viu a página de assinaturas. Para assinar, utilize o botão "Assinar" na seção de planos.');
+			}
+		}
+
+		// Inicializar
+		updateUserProfile();
+		closeLogin();
+		sidebar.classList.remove('active');
+		overlay.classList.remove('active');
+
+		// Header buttons: open login/signup from sidebar header
+		const headerLoginBtn = document.getElementById('headerLoginBtn');
+		const headerSignupBtn = document.getElementById('headerSignupBtn');
+		if (headerLoginBtn) headerLoginBtn.addEventListener('click', (e) => { e.preventDefault(); sidebar.classList.remove('active'); overlay.classList.remove('active'); switchTab('login'); loginModal.classList.add('active'); });
+		if (headerSignupBtn) headerSignupBtn.addEventListener('click', (e) => { e.preventDefault(); sidebar.classList.remove('active'); overlay.classList.remove('active'); switchTab('signup'); loginModal.classList.add('active'); });
+
+		// NEVE - resto do código
+		let mouseX = window.innerWidth / 2;
+		let mouseY = window.innerHeight / 2;
+		const repelRadius = 120;
+		let snowCount = 0;
+		const maxSnow = 120;
+
+		// Create a top-level frog layer so frog elements cover the whole viewport
+		let frogLayer = document.getElementById('frogLayer');
+		if (!frogLayer) {
+			frogLayer = document.createElement('div');
+			frogLayer.id = 'frogLayer';
+			Object.assign(frogLayer.style, {
+				position: 'fixed',
+				left: '0',
+				top: '0',
+				width: '100vw',
+				height: '100vh',
+				pointerEvents: 'none',
+				zIndex: '40',
+				overflow: 'visible'
+			});
+			document.body.appendChild(frogLayer);
+		}
+
+		document.addEventListener('mousemove', (e) => {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		});
+
+		function createSnowflake() {
+			// create a new falling frog; optional restored state handled in loadExistingFrogs
+			if (snowCount >= maxSnow) return;
+
+			const frogUrl = 'https://cdn.discordapp.com/attachments/1472394007177859290/1475317331105153217/brxglnr.webp?ex=699d0bd5&is=699bba55&hm=28de28cba379ead5be3fa05b5dd4316691425d13368ab4d546eb8cdb477618a4&animated=true';
+
+			const img = document.createElement('img');
+			img.className = 'frogflake';
+			img.dataset.created = Date.now();
+			img.src = frogUrl;
+			// position absolute inside frogLayer so it always covers viewport
+			img.style.position = 'absolute';
+			img.style.pointerEvents = 'none';
+			img.style.userSelect = 'none';
+			img.style.zIndex = '10000';
+
+			let startX = Math.random() * window.innerWidth;
+			const size = Math.random() * 18 + 12; // 12 - 30px
+			let speed = Math.random() * 2 + 1;
+			let drift = Math.random() * 0.4 - 0.2;
+
+			img.style.left = startX + 'px';
+			img.style.top = '-40px';
+			img.style.width = size + 'px';
+			img.style.opacity = Math.random() * 0.35 + 0.6;
+
+			frogLayer.appendChild(img);
+			snowCount++;
+
+			let posY = -40;
+			let posX = startX;
+
+			const anim = setInterval(() => {
+				posY += speed;
+				posX += Math.sin(posY / 50) * drift;
+
+				if (posY > window.innerHeight + 80) {
+					// recycle: send frog back to the top with new random horizontal start and small randomization
+					posY = -40;
+					startX = Math.random() * window.innerWidth;
+					posX = startX;
+					img.style.left = startX + 'px';
+					// randomize some properties for variety
+					speed = Math.random() * 2 + 1;
+					drift = Math.random() * 0.4 - 0.2;
+					img.style.opacity = Math.random() * 0.35 + 0.6;
+					img.style.width = (Math.random() * 18 + 12) + 'px';
+					// continue without removing
+				}
+
+				// mouse repulsion disabled (no shield around cursor)
+
+				img.style.transform = `translate(${posX - startX}px, ${posY + 40}px)`;
+			}, 30);
+		}
+
+		// Save current frogs positions to sessionStorage so they can be restored
+		function saveFrogsState() {
+			const frogs = [];
+			document.querySelectorAll('img.frogflake').forEach(img => {
+				const rect = img.getBoundingClientRect();
+				frogs.push({ left: rect.left, top: rect.top, width: rect.width, opacity: parseFloat(getComputedStyle(img).opacity) });
+			});
+			sessionStorage.setItem('frogsState', JSON.stringify(frogs));
+		}
+
+		// Restore frogs from sessionStorage on load
+		function loadFrogsState() {
+			const raw = sessionStorage.getItem('frogsState');
+			if (!raw) return false;
+			let arr = [];
+			try { arr = JSON.parse(raw); } catch(e) { return false; }
+			arr.slice(0, maxSnow).forEach(f => {
+				const frogUrl = 'https://cdn.discordapp.com/attachments/1472394007177859290/1475317331105153217/brxglnr.webp?ex=699d0bd5&is=699bba55&hm=28de28cba379ead5be3fa05b5dd4316691425d13368ab4d546eb8cdb477618a4&animated=true';
+				const img = document.createElement('img');
+				img.className = 'frogflake';
+				img.src = frogUrl;
+				// position absolute inside frogLayer so it spans viewport reliably
+				img.style.position = 'absolute';
+				img.style.left = f.left + 'px';
+				img.style.top = f.top + 'px';
+				img.style.zIndex = '10000';
+				img.style.width = (f.width || 24) + 'px';
+				img.style.opacity = (f.opacity != null ? f.opacity : 0.8);
+				frogLayer.appendChild(img);
+				snowCount++;
+				// continue falling from current position
+				let posY = f.top;
+				let posX = f.left;
+				let speed = Math.random() * 2 + 1;
+				let drift = Math.random() * 0.4 - 0.2;
+				let startX = posX;
+				const anim = setInterval(() => {
+					posY += speed;
+					posX += Math.sin(posY / 50) * drift;
+					if (posY > window.innerHeight + 80) {
+						// recycle rather than remove
+						posY = -40;
+						startX = Math.random() * window.innerWidth;
+						posX = startX;
+						img.style.left = startX + 'px';
+						speed = Math.random() * 2 + 1;
+						drift = Math.random() * 0.4 - 0.2;
+						img.style.opacity = (f.opacity != null ? f.opacity : (Math.random() * 0.35 + 0.6));
+						img.style.width = ((f.width || 24)) + 'px';
+						return;
+					}
+					img.style.transform = `translate(${posX - startX}px, ${posY + 40}px)`;
+				}, 30);
+			});
+			// clear saved state after restoring
+			sessionStorage.removeItem('frogsState');
+			return true;
+		}
+
+		// Save on tab hide/unload
+		document.addEventListener('visibilitychange', () => { if (document.hidden) saveFrogsState(); });
+		window.addEventListener('beforeunload', saveFrogsState);
+
+		// Start continuous creation using the final createSnowflake implementation
+		setInterval(() => {
+			// if under cap, create more
+			if (snowCount < maxSnow) createSnowflake();
+		}, 350);
+
+		// If we have saved frogs from previous tab, restore them first
+		const restored = loadFrogsState();
+		if (!restored) {
+			for (let i = 0; i < 50; i++) {
+				setTimeout(createSnowflake, i * 40);
+			}
+		}
+
+		setTimeout(() => {
+			// Neve criada apenas no início
+		}, 3000);
+
+		// Owners (Discord IDs) display + editor
+		const OWNER_IDS = ['207819716973166592','563720915473530890','1471505228023992538'];
+		const OWNERS_KEY = 'ownersData';
+
+		// Attempt to load owners from owners.json (generated by server-side script).
+		// Falls back to localStorage manual data (key: ownersData) so you can still edit offline.
+		async function getOwnersData(){
+			// try owners.json first
+			try{
+				const resp = await fetch('owners.json', { cache: 'no-store' });
+				if (resp.ok) {
+					const parsed = await resp.json();
+					return OWNER_IDS.map(id => parsed[id] ? { id, ...parsed[id] } : { id, name:'', avatar:'' });
+				}
+			} catch(e) {
+				// ignore fetch errors and fallback
+			}
+
+			// fallback to localStorage
+			const raw = localStorage.getItem('ownersData');
+			if (!raw) return OWNER_IDS.map(id => ({ id, name: '', avatar: '' }));
+			try{ const parsed = JSON.parse(raw); return OWNER_IDS.map(id => parsed[id] ? { id, ...parsed[id] } : { id, name:'', avatar:'' }); }catch(e){ return OWNER_IDS.map(id => ({ id, name:'', avatar:'' })); }
+		}
+
+		async function renderOwners(){
+			const showcase = document.getElementById('ownersShowcase');
+			if (!showcase) return;
+			showcase.innerHTML = '';
+			const data = await getOwnersData();
+			data.forEach(o => {
+				const c = document.createElement('div');
+				c.style.display = 'flex';
+				c.style.flexDirection = 'column';
+				c.style.alignItems = 'center';
+				c.style.gap = '8px';
+				c.style.minWidth = '120px';
+				const si = document.createElement('img');
+				si.src = o.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+				si.alt = o.name || 'Dono';
+				si.style.width = '64px';
+				si.style.height = '64px';
+				si.style.borderRadius = '50%';
+				const sname = document.createElement('div');
+				sname.textContent = o.name || 'Desconhecido';
+				sname.style.color = 'var(--muted)';
+				sname.style.fontWeight = '700';
+				c.appendChild(si);
+				c.appendChild(sname);
+				showcase.appendChild(c);
+			});
+		}
+
+		async function openOwnersEditor(){
+			const container = document.getElementById('ownersContainer');
+			if (!container) return;
+			const data = await getOwnersData();
+			container.innerHTML = '';
+			const form = document.createElement('div');
+			data.forEach(o => {
+				const row = document.createElement('div');
+				row.style.marginBottom = '8px';
+				row.innerHTML = `
+					<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">ID: ${o.id}</div>
+					<input class="input-field" data-id="${o.id}" name="name" placeholder="Nome" value="${o.name || ''}" style="margin-bottom:6px;" />
+					<input class="input-field" data-id="${o.id}" name="avatar" placeholder="Avatar URL (https://...)" value="${o.avatar || ''}" />
+				`;
+				form.appendChild(row);
+			});
+			const saveBtn = document.createElement('button');
+			saveBtn.className = 'btn';
+			saveBtn.textContent = 'Salvar';
+			saveBtn.style.marginRight = '8px';
+			saveBtn.addEventListener('click', () => {
+				const inputs = form.querySelectorAll('input');
+				const store = {};
+				inputs.forEach(inp => {
+					const id = inp.dataset.id;
+					const name = inp.name;
+					store[id] = store[id] || { name: '', avatar: '' };
+					store[id][name] = inp.value;
+				});
+				localStorage.setItem(OWNERS_KEY, JSON.stringify(store));
+				renderOwners();
+			});
+
+			const cancelBtn = document.createElement('button');
+			cancelBtn.className = 'btn btn-secondary';
+			cancelBtn.textContent = 'Cancelar';
+			cancelBtn.addEventListener('click', renderOwners);
+
+			container.appendChild(form);
+			container.appendChild(saveBtn);
+			container.appendChild(cancelBtn);
+		}
+
+		// editOwnersBtn removed from sidebar; render showcase only
+		renderOwners();
+
+		// Testimonials simple rotator
+		const testimonials = [
+			{ text: 'Excelente serviço, rápido e confiável.', author: 'Ana, Brasil' },
+			{ text: 'Consegui acessar conteúdos bloqueados. Recomendo!', author: 'Carlos, Portugal' },
+			{ text: 'Fácil de usar e com boa velocidade.', author: 'Mariana, Brasil' }
+		];
+		let ti = 0;
+		function rotateTestimonial(){
+			ti = (ti + 1) % testimonials.length;
+			document.getElementById('testimonial-text').textContent = '“' + testimonials[ti].text + '”';
+			document.getElementById('testimonial-author').textContent = '— ' + testimonials[ti].author;
+		}
+		setInterval(rotateTestimonial, 4200);
+	</script>
+
+</body>
+</html>
+
+

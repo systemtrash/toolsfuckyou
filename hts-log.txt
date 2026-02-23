@@ -1,0 +1,17 @@
+HTTrack3.49-2+htsswf+htsjava launched on Sat, 21 Feb 2026 12:06:18 at https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/ -O1 "C:\My Web Sites\SITE CLOUDFLARE WARP" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+12:06:28	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/)
+12:06:37	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/lts-releases/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/lts-releases/)
+12:06:37	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/beta-releases/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/beta-releases/)
+12:06:37	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/update-warp/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/update-warp/)
+12:06:37	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/support-lifecycle/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/support-lifecycle/)
+12:06:37	Error: 	"Not Found" (404) at link https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/cloudflare-one-agent-migration/t (from https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/download-warp/cloudflare-one-agent-migration/)
+
+HTTrack Website Copier/3.49-2 mirror complete in 19 seconds : 38 links scanned, 31 files written (2880520 bytes overall) [714006 bytes received at 37579 bytes/sec], 4714646 bytes transferred using HTTP compression in 31 files, ratio 13%, 7.6 requests per connection
+(6 errors, 0 warnings, 0 messages)
