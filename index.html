@@ -1,1 +1,150 @@
-fuck you
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Profile - Discord</title>
+    <link rel="icon" href="assets/icon.png" type="image/png">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="header-nav">
+        <a href="#" class="nav-item active" data-id="898742251105185852"><i class="fa-brands fa-discord"></i> Eu</a>
+        <a href="#" class="nav-item" data-tab="friends"><i class="fa-solid fa-user-group"></i> Gang</a>
+        <a href="#" class="nav-item" data-tab="life"><i class="fa-solid fa-person-running"></i> Life</a>
+    </header>
+
+    <main class="main-container">
+        <div id="tab-profile" class="tab-content active">
+            <div class="top-section">
+                <section class="card profile-card" id="profile-card">
+                    <div class="avatar-container">
+                        <img src="" alt="Avatar" class="avatar" id="user-avatar">
+                        <div class="status-indicator" id="status-indicator"></div>
+                        <div class="status-bubble" id="status-bubble"></div>
+                    </div>
+
+                    <h1 class="profile-name" id="user-name">Carregando...</h1>
+                    <p class="profile-tag" id="user-tag">@username</p>
+
+                    <div class="badges" id="user-badges">
+                    </div>
+
+                    <div class="social-links">
+                        <a href="https://open.spotify.com/user/31iayvhxvh3s2qaytisrae5ara7a?si=1cc675480bb940db"
+                            target="_blank"><i class="fa-brands fa-spotify social-icon"></i></a>
+                        <a href="https://www.instagram.com/alvejantes/" target="_blank"><i
+                                class="fa-brands fa-instagram social-icon"></i></a>
+                        <a href="https://github.com/baalware" target="_blank"><i
+                                class="fa-brands fa-github social-icon"></i></a>
+                    </div>
+                </section>
+
+                <section class="card activity-card">
+                    <div class="activity-header">
+                        <img src="https://via.placeholder.com/100" alt="Activity" class="activity-image"
+                            id="activity-image">
+                        <div class="activity-text">
+                            <h3 id="activity-title">Homenagem Aos Reliqui...</h3>
+                            <p id="activity-detail">DJ Matt D; Mc Livinho; Mc Davi...</p>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+
+                    <div class="activity-info-box">
+                        <div class="info-label">Última Atividade</div>
+                        <div class="info-value"><i class="fa-regular fa-clock"></i> <span id="last-activity">25 de fev.
+                                de
+                                2026</span></div>
+                    </div>
+
+                    <div class="activity-info-box">
+                        <div class="info-label">Plataforma</div>
+                        <div class="info-value"><span id="platform-icon"><i class="fa-brands fa-spotify"
+                                    style="color: #1DB954;"></i></span> <span id="platform-name">Spotify Premium</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card featured-section" id="featured-section">
+                <div class="featured-header">
+                    <div style="font-size: 0.7rem; color: #43b581; display: flex; align-items: center; gap: 5px;"
+                        id="featured-status-icon"><i class="fa-solid fa-gamepad"></i> Atividade</div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);" id="featured-status-label"><i
+                            class="fa-solid fa-play"></i> Fazendo agora</div>
+                </div>
+
+                <div class="featured-content">
+                    <img src="https://via.placeholder.com/80" alt="Featured" style="border-radius: 8px;"
+                        id="featured-image">
+                    <div class="featured-text">
+                        <h4 style="font-size: 0.85rem;" id="featured-title">Nenhuma Atividade</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);" id="featured-detail">O usuário não está
+                            em
+                            nenhuma aplicação no momento.</p>
+                    </div>
+                </div>
+
+                <div class="featured-bg-text" id="featured-bg-text">ACTIVITY</div>
+            </section>
+        </div>
+
+        <div id="tab-friends" class="tab-content">
+            <h2 class="friends-title">real friends</h2>
+            <div class="friends-grid" id="friends-grid">
+            </div>
+        </div>
+
+        <div id="tab-life" class="tab-content">
+            <div class="content-grid">
+                <div class="info-card">
+                    <h2><i class="fa-solid fa-hand-back-fist"></i> Esportes</h2>
+                    <div class="list-item"><i class="fa-solid fa-bolt"></i> Muay Thai</div>
+                    <div class="list-item"><i class="fa-solid fa-bolt"></i> Boxe</div>
+                    <div class="list-item"><i class="fa-solid fa-bolt"></i> Jiu Jitsu</div>
+                    <div class="list-item"><i class="fa-solid fa-bolt"></i> Academia</div>
+                </div>
+
+                <div class="info-card">
+                    <h2><i class="fa-solid fa-bottle-droplet"></i> Suplementos</h2>
+                    <div class="list-item"><i class="fa-solid fa-check"></i> Whey Protein</div>
+                    <div class="list-item"><i class="fa-solid fa-check"></i> Creatina</div>
+                    <div class="list-item"><i class="fa-solid fa-check"></i> Pré Treino</div>
+                    <div class="list-item"><i class="fa-solid fa-check"></i> Multivitamínico</div>
+                </div>
+
+                <div class="info-card">
+                    <h2><i class="fa-solid fa-umbrella-beach"></i> Lazer</h2>
+                    <div class="list-item"><i class="fa-solid fa-plane"></i> Viajar</div>
+                    <div class="list-item"><i class="fa-solid fa-film"></i> Filmes</div>
+                    <div class="list-item"><i class="fa-solid fa-champagne-glasses"></i> Festas</div>
+                    <div class="list-item"><i class="fa-solid fa-fish"></i> Pescar</div>
+                    <div class="list-item"><i class="fa-solid fa-dumbbell"></i> Academia</div>
+                    <div class="list-item"><i class="fa-solid fa-comments"></i> Resenhas</div>
+                    <div class="list-item"><i class="fa-solid fa-laptop"></i> Computador</div>
+                    <div class="list-item"><i class="fa-solid fa-glass-cheers"></i> Beber</div>
+                    <div class="list-item"><i class="fa-solid fa-car"></i> Rolês de Carro</div>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+    <audio id="bg-music" src="music/music.mp3" loop autoplay></audio>
+    <div class="audio-trigger" id="audio-control">
+        <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
